@@ -23,3 +23,35 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    
+    - name: Despliegue en nuget domain mvc
+      id: publish_nuget_mvc
+      uses: rohith/publish-nuget@v2
+      with:
+          # Filepath of the project to be packaged, relative to root of repository
+          PROJECT_FILE_PATH: Isa0091.Domain.Mvc/Isa0091.Domain.Mvc.csproj
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+     
+    - name: Despliegue en nuget core
+      id: publish_nuget_core
+      uses: rohith/publish-nuget@v2
+      with:
+          # Filepath of the project to be packaged, relative to root of repository
+          PROJECT_FILE_PATH: Isa0091.Domain.Core/Isa0091.Domain.Core.csproj
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          
+    - name: Despliegue en nuget contextInjection
+      id: publish_nuget_contextInjection
+      uses: rohith/publish-nuget@v2
+      with:
+          # Filepath of the project to be packaged, relative to root of repository
+          PROJECT_FILE_PATH: Isa0091.Domain.ContextInjection/Isa0091.Domain.ContextInjection.csproj
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          
+    - name: Despliegue en nuget context
+      id: publish_nuget_context
+      uses: rohith/publish-nuget@v2
+      with:
+          # Filepath of the project to be packaged, relative to root of repository
+          PROJECT_FILE_PATH: Isa0091.Domain.Context/Isa0091.Domain.Context.csproj
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
