@@ -25,8 +25,8 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     
     - name: Despliegue en nuget
-    - uses: brandedoutcast/publish-nuget@v2.5.5
-    with:
-    PROJECT_FILE_PATH: Isa0091.Domain.Mvc/Isa0091.Domain.Mvc.csproj
-    TAG_FORMAT: '*'
-    NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+      PROJECT_FILE_PATH: Isa0091.Domain.Mvc/Isa0091.Domain.Mvc.csproj
+      TAG_FORMAT: '*'
+      NUGET_KEY: ${{secrets.NUGET_API_KEY}}
