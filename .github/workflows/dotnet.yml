@@ -27,6 +27,6 @@ jobs:
     - name: Despliegue en nuget
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
-      PROJECT_FILE_PATH: Isa0091.Domain.Mvc/Isa0091.Domain.Mvc.csproj
+      PROJECT_FILE_PATH: Isa0091.Domain/Isa0091.Domain.Mvc/Isa0091.Domain.Mvc.csproj
       TAG_FORMAT: '*'
       NUGET_KEY: ${{secrets.NUGET_API_KEY}}
