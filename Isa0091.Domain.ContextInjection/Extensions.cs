@@ -27,7 +27,7 @@ namespace Isa0091.Domain.ContextInjection
             params Assembly[] modelsAssemblies)
         {
 
-            if(config != null)
+            if(string.IsNullOrEmpty(config.ConnectionString)==false)
             {
                 List<Type> events = new List<Type>();
                 foreach (Assembly modelAssembly in modelsAssemblies)
@@ -63,9 +63,8 @@ namespace Isa0091.Domain.ContextInjection
                     services.AddSingleton(sender);
 
                 }
-
-                services.AddScoped<IIntegrationEventSender, ServiceBusTopicSender>();
             }
+            services.AddScoped<IIntegrationEventSender, ServiceBusTopicSender>();
 
         }
 
