@@ -26,42 +26,47 @@ namespace Isa0091.Domain.ContextInjection
             IntegrationEventTopicConfiguration config,
             params Assembly[] modelsAssemblies)
         {
-            List<Type> events = new List<Type>();
-            foreach (Assembly modelAssembly in modelsAssemblies)
+
+            if(config != null)
             {
-                events.AddRange(GetRootEntities(modelAssembly));
-            }
-            var adm = new Azure.Messaging.ServiceBus.Administration.ServiceBusAdministrationClient(config.ConnectionString);
-            ServiceBusClient client = new ServiceBusClient(config.ConnectionString);
-            foreach (Type root in events)
-            {
-                var exits = adm.TopicExistsAsync(GetTopicName(root)).GetAwaiter().GetResult();
-                if (!exits)
+                List<Type> events = new List<Type>();
+                foreach (Assembly modelAssembly in modelsAssemblies)
                 {
-                    var options = new CreateTopicOptions(GetTopicName(root));
-                    options.DefaultMessageTimeToLive = new TimeSpan(0, 0, config.TimeToLiveSeconds);
-                    options.EnablePartitioning = config.EnablePatitioning;
-                    if (config.MaxSizeInMegabytes != null)
-                        options.MaxSizeInMegabytes = config.MaxSizeInMegabytes.Value;
-
-                    if (config.AutoDeleteSeconds != null)
-                        options.AutoDeleteOnIdle = new TimeSpan(0, 0, config.AutoDeleteSeconds.Value);
-
-                    if (config.DuplicateDetectionSeconds != null)
-                    {
-                        options.RequiresDuplicateDetection = true;
-                        options.DuplicateDetectionHistoryTimeWindow =
-                            new TimeSpan(0, 0, config.DuplicateDetectionSeconds.Value);
-                    }
-                        
-                    adm.CreateTopicAsync(options).GetAwaiter().GetResult();
+                    events.AddRange(GetRootEntities(modelAssembly));
                 }
-                var sender = client.CreateSender(GetTopicName(root));
-                services.AddSingleton(sender);
+                var adm = new Azure.Messaging.ServiceBus.Administration.ServiceBusAdministrationClient(config.ConnectionString);
+                ServiceBusClient client = new ServiceBusClient(config.ConnectionString);
+                foreach (Type root in events)
+                {
+                    var exits = adm.TopicExistsAsync(GetTopicName(root)).GetAwaiter().GetResult();
+                    if (!exits)
+                    {
+                        var options = new CreateTopicOptions(GetTopicName(root));
+                        options.DefaultMessageTimeToLive = new TimeSpan(0, 0, config.TimeToLiveSeconds);
+                        options.EnablePartitioning = config.EnablePatitioning;
+                        if (config.MaxSizeInMegabytes != null)
+                            options.MaxSizeInMegabytes = config.MaxSizeInMegabytes.Value;
 
+                        if (config.AutoDeleteSeconds != null)
+                            options.AutoDeleteOnIdle = new TimeSpan(0, 0, config.AutoDeleteSeconds.Value);
+
+                        if (config.DuplicateDetectionSeconds != null)
+                        {
+                            options.RequiresDuplicateDetection = true;
+                            options.DuplicateDetectionHistoryTimeWindow =
+                                new TimeSpan(0, 0, config.DuplicateDetectionSeconds.Value);
+                        }
+
+                        adm.CreateTopicAsync(options).GetAwaiter().GetResult();
+                    }
+                    var sender = client.CreateSender(GetTopicName(root));
+                    services.AddSingleton(sender);
+
+                }
+
+                services.AddScoped<IIntegrationEventSender, ServiceBusTopicSender>();
             }
 
-            services.AddScoped<IIntegrationEventSender, ServiceBusTopicSender>();
         }
 
         private static string GetTopicName(Type root)
